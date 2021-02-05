@@ -1,0 +1,21 @@
+[{
+  "gameName":"Mass Effect: Legendary Edition",
+  "gameGenre":"RPG",
+  "gamePublisher":{
+    "name":"EA",
+    "dev":"Bioware"
+  },
+  "releaseDate":"11-5-2021",
+  "rating": 5,
+  "preOrder": true
+},{
+  "gameName":"Concrete Genie",
+  "gameGenre":"Action/Adventure/RPG",
+  "gamePublisher":{
+    "name":"SIE",
+    "dev":"PixelOpus"
+  },
+  "releaseDate":"01-02-2020",
+  "rating": 4,
+  "preOrder": false
+}]
