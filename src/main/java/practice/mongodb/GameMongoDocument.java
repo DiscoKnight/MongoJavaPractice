@@ -1,4 +1,4 @@
-package mongodb;
+package practice.mongodb;
 
 import lombok.Builder;
 import lombok.Value;
