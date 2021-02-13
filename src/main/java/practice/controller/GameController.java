@@ -21,7 +21,7 @@ public class GameController {
     @GetMapping(value = "/getAllGames")
     @ResponseStatus(HttpStatus.OK)
     List<GameMongoDocument> getGames(){
-        return mongoDBDriverService.getGameFromMongo();
+        return mongoDBDriverService.getGameFromMongoDriver();
     }
 
     @PostMapping(value = "/addGame")

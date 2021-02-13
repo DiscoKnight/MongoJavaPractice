@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 import practice.mongodb.GameMongoDocument;
 import practice.repository.GameModel;
 import practice.repository.MongoDBJpaRepository;
+import practice.transformer.MyGameTransformer;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,13 +22,27 @@ public class MongoDBDriverServiceImpl implements MongoDBDriverService {
     private Boolean remote = false;
     MongoClient mongoClient;
 
+    private List<GameMongoDocument> mongoDocuments;
+
+    @PostConstruct
+    void init(){
+        mongoDocuments = new ArrayList();
+    }
+
     @Autowired
     private MongoDBJpaRepository mongoDBJpaRepository;
 
     @Override
-    public List<GameMongoDocument> getGameFromMongo() {
+    public List<GameMongoDocument> getGameFromMongoJPA() {
 
-        List<GameModel> li = mongoDBJpaRepository.findAll();
+        mongoDBJpaRepository.findAll().stream().forEach(this::gameTransform);
+
+        return mongoDocuments;
+
+    }
+
+    @Override
+    public List<GameMongoDocument> getGameFromMongoDriver(){
 
         MongoDatabase database = foo().getDatabase("MyGameLibraryApp");
         MongoCollection<Document> doc = database.getCollection("gameCollection");
@@ -40,7 +56,6 @@ public class MongoDBDriverServiceImpl implements MongoDBDriverService {
         }
 
         return li2;
-
     }
 
     @Override
@@ -49,8 +64,12 @@ public class MongoDBDriverServiceImpl implements MongoDBDriverService {
         MongoDatabase database = foo().getDatabase("MyGameLibraryApp");
         MongoCollection<Document> doc = database.getCollection("gameCollection");
 
+    }
 
+    private void gameTransform(GameModel gameModel){
+        GameMongoDocument document = MyGameTransformer.INSTANCE.getGameMongo(gameModel);
 
+        mongoDocuments.add(document);
     }
 
     private MongoClient foo(){
