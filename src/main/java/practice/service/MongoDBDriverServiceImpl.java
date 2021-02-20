@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import practice.mongodb.GameMongoDocument;
 import practice.repository.GameModel;
 import practice.repository.MongoDBJpaRepository;
-import practice.transformer.MyGameTransformer;
+
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -20,9 +20,11 @@ import java.util.List;
 public class MongoDBDriverServiceImpl implements MongoDBDriverService {
 
     private Boolean remote = false;
-    MongoClient mongoClient;
+    private MongoClient mongoClient;
+    private MongoDatabase database;
 
     private List<GameMongoDocument> mongoDocuments;
+    private MongoCollection<Document> documentMongoCollection;
 
     @PostConstruct
     void init(){
@@ -33,18 +35,18 @@ public class MongoDBDriverServiceImpl implements MongoDBDriverService {
     private MongoDBJpaRepository mongoDBJpaRepository;
 
     @Override
-    public List<GameMongoDocument> getGameFromMongoJPA() {
+    public List<GameModel> getGameFromMongoJPA() {
 
-        mongoDBJpaRepository.findAll().stream().forEach(this::gameTransform);
+        var v = mongoDBJpaRepository.findAll();
 
-        return mongoDocuments;
+        return v;
 
     }
 
     @Override
     public List<GameMongoDocument> getGameFromMongoDriver(){
 
-        MongoDatabase database = foo().getDatabase("MyGameLibraryApp");
+        MongoDatabase database = connectToDb().getDatabase("MyGameLibraryApp");
         MongoCollection<Document> doc = database.getCollection("gameCollection");
 
         List<GameMongoDocument> li2 = new ArrayList<>();
@@ -61,18 +63,19 @@ public class MongoDBDriverServiceImpl implements MongoDBDriverService {
     @Override
     public void addGameToMongoDB(GameMongoDocument gameMongoDocument){
 
-        MongoDatabase database = foo().getDatabase("MyGameLibraryApp");
-        MongoCollection<Document> doc = database.getCollection("gameCollection");
+        GameModel model = GameModel.builder()
+                .id("2")
+                .gameName(gameMongoDocument.getGameName())
+                .gameGenre(gameMongoDocument.getGameGenre())
+                .preOrder(gameMongoDocument.isPreOrder())
+                .rating(gameMongoDocument.getRating())
+                .build();
+
+        mongoDBJpaRepository.save(model);
 
     }
 
-    private void gameTransform(GameModel gameModel){
-        GameMongoDocument document = MyGameTransformer.INSTANCE.getGameMongo(gameModel);
-
-        mongoDocuments.add(document);
-    }
-
-    private MongoClient foo(){
+    private MongoClient connectToDb(){
         if(remote) {
             MongoClientURI uri = new MongoClientURI(
                     "mongodb+srv://dev-1:Normandy19@cluster0.feijx.mongodb.net/MyGameLibraryApp?retryWrites=true&w=majority");

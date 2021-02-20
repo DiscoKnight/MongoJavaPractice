@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import practice.mongodb.GameMongoDocument;
+import practice.repository.GameModel;
 import practice.service.MongoDBDriverService;
 
 import java.util.List;
@@ -20,13 +21,15 @@ public class GameController {
 
     @GetMapping(value = "/getAllGames")
     @ResponseStatus(HttpStatus.OK)
-    List<GameMongoDocument> getGames(){
-        return mongoDBDriverService.getGameFromMongoDriver();
+    List<GameModel> getGames() {
+        return mongoDBDriverService.getGameFromMongoJPA();
     }
 
     @PostMapping(value = "/addGame")
     @ResponseStatus(HttpStatus.CREATED)
-    void addGame(@RequestBody(required = false) GameMongoDocument gameMongoDocument){
+    void addGame(@RequestBody(required = false) GameMongoDocument gameMongoDocument) {
+
+        mongoDBDriverService.addGameToMongoDB(gameMongoDocument);
 
     }
 }

@@ -7,5 +7,9 @@ import lombok.Value;
 @Value
 public class GameMongoDocument {
 
-    private String gameName;
+    private final String gameName;
+    private final String gameGenre;
+    private final int rating;
+    private final boolean preOrder;
+
 }
