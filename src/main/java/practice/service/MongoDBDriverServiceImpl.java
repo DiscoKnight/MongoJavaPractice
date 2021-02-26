@@ -7,6 +7,7 @@ import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import practice.configuration.GameAppplicationConfig;
 import practice.mongodb.GameMongoDocument;
 import practice.repository.GameModel;
 import practice.repository.MongoDBJpaRepository;
@@ -34,20 +35,21 @@ public class MongoDBDriverServiceImpl implements MongoDBDriverService {
     @Autowired
     private MongoDBJpaRepository mongoDBJpaRepository;
 
+    @Autowired
+    private GameAppplicationConfig gameAppplicationConfig;
+
     @Override
     public List<GameModel> getGameFromMongoJPA() {
 
-        var v = mongoDBJpaRepository.findAll();
-
-        return v;
+        return mongoDBJpaRepository.findAll();
 
     }
 
     @Override
     public List<GameMongoDocument> getGameFromMongoDriver(){
 
-        MongoDatabase database = connectToDb().getDatabase("MyGameLibraryApp");
-        MongoCollection<Document> doc = database.getCollection("gameCollection");
+        MongoDatabase database = connectToDb().getDatabase(gameAppplicationConfig.databaseName);
+        MongoCollection<Document> doc = database.getCollection(gameAppplicationConfig.collectionName);
 
         List<GameMongoDocument> li2 = new ArrayList<>();
 
@@ -64,9 +66,10 @@ public class MongoDBDriverServiceImpl implements MongoDBDriverService {
     public void addGameToMongoDB(GameMongoDocument gameMongoDocument){
 
         GameModel model = GameModel.builder()
-                .id("2")
+                .id("5")
                 .gameName(gameMongoDocument.getGameName())
                 .gameGenre(gameMongoDocument.getGameGenre())
+                .gamePublisher(gameMongoDocument.getGamePublisher())
                 .preOrder(gameMongoDocument.isPreOrder())
                 .rating(gameMongoDocument.getRating())
                 .build();

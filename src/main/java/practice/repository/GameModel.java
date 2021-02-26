@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+import practice.model.PublisherModel;
 
 @Builder
 @NoArgsConstructor
@@ -21,6 +22,8 @@ public class GameModel {
 
     private String gameName;
     private String gameGenre;
+    private PublisherModel gamePublisher;
     private int rating;
     private boolean preOrder;
+
 }

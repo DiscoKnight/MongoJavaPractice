@@ -1,3 +1,7 @@
 server:
   servlet:
     context-path: "/api/v1.0/mongo"
+
+collection:
+  databaseName: "MyGameLibraryApp"
+  collectionName: "gameCollection"
