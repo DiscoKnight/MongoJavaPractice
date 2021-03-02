@@ -9,10 +9,16 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @EnableMongoRepositories(basePackages = "practice.repository")
 public class GameAppplicationConfig extends AbstractMongoClientConfiguration {
 
-    @Value("${collection.databaseName}")
+    @Value("${mongo.isRemote}")
+    public boolean isRemote;
+
+    @Value("${mongo.url}")
+    public String url;
+
+    @Value("${mongo.collection.databaseName}")
     public String databaseName;
 
-    @Value("${collection.collectionName}")
+    @Value("${mongo.collection.collectionName}")
     public String collectionName;
 
     @Override

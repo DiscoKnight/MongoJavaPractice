@@ -27,16 +27,16 @@ public class MongoDBDriverServiceImpl implements MongoDBDriverService {
     private List<GameMongoDocument> mongoDocuments;
     private MongoCollection<Document> documentMongoCollection;
 
-    @PostConstruct
-    void init(){
-        mongoDocuments = new ArrayList();
-    }
-
     @Autowired
     private MongoDBJpaRepository mongoDBJpaRepository;
 
     @Autowired
     private GameAppplicationConfig gameAppplicationConfig;
+
+    @PostConstruct
+    void init(){
+        mongoDocuments = new ArrayList();
+    }
 
     @Override
     public List<GameModel> getGameFromMongoJPA() {
@@ -51,22 +51,22 @@ public class MongoDBDriverServiceImpl implements MongoDBDriverService {
         MongoDatabase database = connectToDb().getDatabase(gameAppplicationConfig.databaseName);
         MongoCollection<Document> doc = database.getCollection(gameAppplicationConfig.collectionName);
 
-        List<GameMongoDocument> li2 = new ArrayList<>();
+        List<GameMongoDocument> gameMongoDocumentArrayList = new ArrayList<>();
 
         for (Document dc : doc.find()) {
 
-            li2.add(GameMongoDocument.builder().gameName(dc.getString("gameName")).build());
+            gameMongoDocumentArrayList.add(GameMongoDocument.builder().gameName(dc.getString("gameName")).build());
 
         }
 
-        return li2;
+        return gameMongoDocumentArrayList;
     }
 
     @Override
     public void addGameToMongoDB(GameMongoDocument gameMongoDocument){
 
         GameModel model = GameModel.builder()
-                .id("5")
+                .id("7")
                 .gameName(gameMongoDocument.getGameName())
                 .gameGenre(gameMongoDocument.getGameGenre())
                 .gamePublisher(gameMongoDocument.getGamePublisher())
@@ -79,9 +79,9 @@ public class MongoDBDriverServiceImpl implements MongoDBDriverService {
     }
 
     private MongoClient connectToDb(){
-        if(remote) {
+        if(gameAppplicationConfig.isRemote) {
             MongoClientURI uri = new MongoClientURI(
-                    "mongodb+srv://dev-1:Normandy19@cluster0.feijx.mongodb.net/MyGameLibraryApp?retryWrites=true&w=majority");
+                    gameAppplicationConfig.url);
 
             return mongoClient = new MongoClient(uri);
         }

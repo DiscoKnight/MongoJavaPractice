@@ -25,5 +25,6 @@ public class GameModel {
     private PublisherModel gamePublisher;
     private int rating;
     private boolean preOrder;
+    private String imageUrl;
 
 }

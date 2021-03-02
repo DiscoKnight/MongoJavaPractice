@@ -13,6 +13,6 @@ public class GameMongoDocument {
     private PublisherModel gamePublisher;
     private final int rating;
     private final boolean preOrder;
-
+    private final String imageUrl;
 
 }

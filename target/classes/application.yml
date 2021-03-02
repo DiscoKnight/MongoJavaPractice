@@ -2,6 +2,9 @@ server:
   servlet:
     context-path: "/api/v1.0/mongo"
 
-collection:
-  databaseName: "MyGameLibraryApp"
-  collectionName: "gameCollection"
+mongo:
+  isRemote: false
+  url: "mongodb+srv://dev-1:Normandy19@cluster0.feijx.mongodb.net/MyGameLibraryApp?retryWrites=true&w=majority"
+  collection:
+    databaseName: "MyGameLibraryApp"
+    collectionName: "gameCollection"
