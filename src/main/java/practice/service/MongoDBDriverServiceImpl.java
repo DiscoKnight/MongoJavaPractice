@@ -66,7 +66,7 @@ public class MongoDBDriverServiceImpl implements MongoDBDriverService {
     public void addGameToMongoDB(GameMongoDocument gameMongoDocument){
 
         GameModel model = GameModel.builder()
-                .id("7")
+                .id("1")
                 .gameName(gameMongoDocument.getGameName())
                 .gameGenre(gameMongoDocument.getGameGenre())
                 .gamePublisher(gameMongoDocument.getGamePublisher())

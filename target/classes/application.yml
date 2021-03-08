@@ -3,8 +3,8 @@ server:
     context-path: "/api/v1.0/mongo"
 
 mongo:
+  url: "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&ssl=false"
   isRemote: false
-  url: "mongodb+srv://dev-1:Normandy19@cluster0.feijx.mongodb.net/MyGameLibraryApp?retryWrites=true&w=majority"
   collection:
-    databaseName: "MyGameLibraryApp"
-    collectionName: "gameCollection"
+    databaseName: "MyGameLibrary"
+    collectionName: "Games"
