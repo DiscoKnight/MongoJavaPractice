@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface MongoDBDriverService {
 
-    List<GameModel> getGameFromMongoJPA();
+    List<GameMongoDocument> getGameFromMongoJPA();
 
     void addGameToMongoDB(GameMongoDocument gameMongoDocument);
 

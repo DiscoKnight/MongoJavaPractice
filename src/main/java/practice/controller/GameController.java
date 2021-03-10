@@ -21,7 +21,7 @@ public class GameController {
 
     @GetMapping(value = "/getAllGames")
     @ResponseStatus(HttpStatus.OK)
-    List<GameModel> getGames() {
+    List<GameMongoDocument> getGames() {
         return mongoDBDriverService.getGameFromMongoJPA();
     }
 

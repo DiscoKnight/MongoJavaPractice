@@ -42,18 +42,19 @@ public class MongoDBDriverServiceImpl implements MongoDBDriverService {
     }
 
     @Override
-    public List<GameModel> getGameFromMongoJPA() {
+    public List<GameMongoDocument> getGameFromMongoJPA() {
 
         List<GameModel> gm = mongoDBJpaRepository.findAll();
+        List<GameMongoDocument> gmd = new ArrayList<>();
+
         MyGameTransformerImpl impl = new MyGameTransformerImpl();
 
         for(GameModel m : gm){
-            GameMongoDocument doc = impl.getGameMongo(m);
+            gmd.add(impl.getGameMongo(m));
 
-            System.out.println("smurf");
         }
 
-        return gm;
+        return gmd;
 
     }
 
