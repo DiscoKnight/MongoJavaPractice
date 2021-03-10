@@ -1,18 +1,20 @@
 package practice.mongodb;
 
-import lombok.Builder;
-import lombok.Value;
+import lombok.*;
 import practice.model.PublisherModel;
 
 @Builder
-@Value
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class GameMongoDocument {
 
-    private final String gameName;
-    private final String gameGenre;
-    private PublisherModel gamePublisher;
-    private final int rating;
-    private final boolean preOrder;
-    private final String imageUrl;
+    public String id;
+    public String gameName;
+    public String gameGenre;
+    public PublisherModel gamePublisher;
+    public int rating;
+    public boolean preOrder;
+    public String imageUrl;
 
 }

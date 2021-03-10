@@ -8,9 +8,12 @@ import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import practice.configuration.GameAppplicationConfig;
+import practice.model.PublisherModel;
 import practice.mongodb.GameMongoDocument;
 import practice.repository.GameModel;
 import practice.repository.MongoDBJpaRepository;
+import practice.transformer.MyGameTransformer;
+import practice.transformer.MyGameTransformerImpl;
 
 
 import javax.annotation.PostConstruct;
@@ -41,7 +44,16 @@ public class MongoDBDriverServiceImpl implements MongoDBDriverService {
     @Override
     public List<GameModel> getGameFromMongoJPA() {
 
-        return mongoDBJpaRepository.findAll();
+        List<GameModel> gm = mongoDBJpaRepository.findAll();
+        MyGameTransformerImpl impl = new MyGameTransformerImpl();
+
+        for(GameModel m : gm){
+            GameMongoDocument doc = impl.getGameMongo(m);
+
+            System.out.println("smurf");
+        }
+
+        return gm;
 
     }
 
@@ -55,7 +67,13 @@ public class MongoDBDriverServiceImpl implements MongoDBDriverService {
 
         for (Document dc : doc.find()) {
 
-            gameMongoDocumentArrayList.add(GameMongoDocument.builder().gameName(dc.getString("gameName")).build());
+            MyGameTransformerImpl im = new MyGameTransformerImpl();
+
+            gameMongoDocumentArrayList.add(GameMongoDocument.builder()
+                    .gameName(dc.getString("gameName"))
+                    .gameGenre(dc.getString("gameGenre"))
+                    //.gamePublisher(dc.get("gamePublisher", PublisherModel.class))
+                    .build());
 
         }
 
