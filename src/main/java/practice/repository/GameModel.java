@@ -13,7 +13,7 @@ import practice.model.PublisherModel;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Document(collection = "gameCollection")
+@Document(collection = "Games")
 public class GameModel {
 
     @Id

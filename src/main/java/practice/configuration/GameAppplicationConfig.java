@@ -23,6 +23,6 @@ public class GameAppplicationConfig extends AbstractMongoClientConfiguration {
 
     @Override
     protected String getDatabaseName() {
-        return "MyGameLibraryApp";
+        return "MyGameLibrary";
     }
 }
