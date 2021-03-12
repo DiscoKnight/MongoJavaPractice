@@ -3,18 +3,15 @@ package practice.service;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import practice.configuration.GameAppplicationConfig;
-import practice.model.PublisherModel;
-import practice.mongodb.GameMongoDocument;
+import practice.model.GameCriteria;
+import practice.model.GameMongoDocument;
 import practice.repository.GameModel;
 import practice.repository.MongoDBJpaRepository;
-import practice.transformer.MyGameTransformer;
 import practice.transformer.MyGameTransformerImpl;
-
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -23,12 +20,9 @@ import java.util.List;
 @Service
 public class MongoDBDriverServiceImpl implements MongoDBDriverService {
 
-    private Boolean remote = false;
     private MongoClient mongoClient;
-    private MongoDatabase database;
-
     private List<GameMongoDocument> mongoDocuments;
-    private MongoCollection<Document> documentMongoCollection;
+    private MyGameTransformerImpl myGameTransformer;
 
     @Autowired
     private MongoDBJpaRepository mongoDBJpaRepository;
@@ -37,43 +31,49 @@ public class MongoDBDriverServiceImpl implements MongoDBDriverService {
     private GameAppplicationConfig gameAppplicationConfig;
 
     @PostConstruct
-    void init(){
+    void init() {
+
         mongoDocuments = new ArrayList();
+        myGameTransformer = new MyGameTransformerImpl();
+
+        if (gameAppplicationConfig.isRemote) {
+            MongoClientURI uri = new MongoClientURI(
+                    gameAppplicationConfig.url);
+
+            mongoClient = new MongoClient(uri);
+        } else {
+            mongoClient = new MongoClient("localhost", 27017);
+        }
     }
 
     @Override
     public List<GameMongoDocument> getGameFromMongoJPA() {
 
-        List<GameModel> gm = mongoDBJpaRepository.findAll();
-        List<GameMongoDocument> gmd = new ArrayList<>();
+        List<GameMongoDocument> gameMongoDocuments = new ArrayList<>();
 
-        MyGameTransformerImpl impl = new MyGameTransformerImpl();
-
-        for(GameModel m : gm){
-            gmd.add(impl.getGameMongo(m));
+        for (GameModel gameModel : mongoDBJpaRepository.findAll()) {
+            gameMongoDocuments.add(myGameTransformer.getGameMongo(gameModel));
 
         }
 
-        return gmd;
+        return gameMongoDocuments;
 
     }
 
     @Override
-    public List<GameMongoDocument> getGameFromMongoDriver(){
+    public List<GameMongoDocument> getGameFromMongoDriver() {
 
-        MongoDatabase database = connectToDb().getDatabase(gameAppplicationConfig.databaseName);
-        MongoCollection<Document> doc = database.getCollection(gameAppplicationConfig.collectionName);
+        MongoCollection<Document> gameDocumentFromCollection = mongoClient
+                .getDatabase(gameAppplicationConfig.databaseName)
+                .getCollection(gameAppplicationConfig.collectionName);
 
         List<GameMongoDocument> gameMongoDocumentArrayList = new ArrayList<>();
 
-        for (Document dc : doc.find()) {
-
-            MyGameTransformerImpl im = new MyGameTransformerImpl();
+        for (Document gameDocument : gameDocumentFromCollection.find()) {
 
             gameMongoDocumentArrayList.add(GameMongoDocument.builder()
-                    .gameName(dc.getString("gameName"))
-                    .gameGenre(dc.getString("gameGenre"))
-                    //.gamePublisher(dc.get("gamePublisher", PublisherModel.class))
+                    .gameName(gameDocument.getString("gameName"))
+                    .gameGenre(gameDocument.getString("gameGenre"))
                     .build());
 
         }
@@ -82,32 +82,36 @@ public class MongoDBDriverServiceImpl implements MongoDBDriverService {
     }
 
     @Override
-    public void addGameToMongoDB(GameMongoDocument gameMongoDocument){
+    public void addGameToMongoDB(GameMongoDocument gameMongoDocument) {
 
-        GameModel model = GameModel.builder()
-                .id("1")
-                .gameName(gameMongoDocument.getGameName())
-                .gameGenre(gameMongoDocument.getGameGenre())
-                .gamePublisher(gameMongoDocument.getGamePublisher())
-                .preOrder(gameMongoDocument.isPreOrder())
-                .rating(gameMongoDocument.getRating())
-                .build();
+        GameModel model = myGameTransformer.getMongoDocument(gameMongoDocument);
+        model.id = generateIdForDocument();
 
         mongoDBJpaRepository.save(model);
 
+
     }
 
-    private MongoClient connectToDb(){
-        if(gameAppplicationConfig.isRemote) {
-            MongoClientURI uri = new MongoClientURI(
-                    gameAppplicationConfig.url);
+    @Override
+    public List<GameMongoDocument> getGamesByFilter(GameCriteria criteria) {
 
-            return mongoClient = new MongoClient(uri);
-        }
-        else{
-            return mongoClient = new MongoClient("localhost", 27017);
-        }
+        mongoDocuments.clear();
+
+        List<GameModel> gameModelList = mongoDBJpaRepository.findByDevAndGenre(criteria.getDev(),
+                criteria.getGenre(),
+                criteria.getPublisher());
+
+        gameModelList.stream().forEach(this::transform);
+
+        return mongoDocuments;
     }
 
+    private void transform(GameModel gameModel) {
+        mongoDocuments.add(myGameTransformer.getGameMongo(gameModel));
+    }
+
+    private String generateIdForDocument() {
+        return String.valueOf(mongoDBJpaRepository.count() + 1);
+    }
 
 }

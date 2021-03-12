@@ -1,4 +1,4 @@
-package practice.mongodb;
+package practice.model;
 
 import lombok.*;
 import practice.model.PublisherModel;
