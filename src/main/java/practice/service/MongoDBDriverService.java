@@ -33,4 +33,9 @@ public interface MongoDBDriverService {
      *
      */
     List<GameMongoDocument> getGamesByFilter(GameCriteria criteria);
+
+    /**
+     *
+     */
+    GameMongoDocument getGameById(String id);
 }

@@ -106,6 +106,13 @@ public class MongoDBDriverServiceImpl implements MongoDBDriverService {
         return mongoDocuments;
     }
 
+    @Override
+    public GameMongoDocument getGameById(String id){
+        GameModel gameModel = mongoDBJpaRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+
+        return myGameTransformer.getGameMongo(gameModel);
+    }
+
     private void transform(GameModel gameModel) {
         mongoDocuments.add(myGameTransformer.getGameMongo(gameModel));
     }

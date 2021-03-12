@@ -34,8 +34,8 @@ public class GameController {
     @ResponseBody
     GameMongoDocument findByGameById(@PathVariable String id){
 
-        System.out.println("smurf");
-        return null;
+        return mongoDBDriverService.getGameById(id);
+
     }
 
     @GetMapping(value = "/game/findGameWithParams")
