@@ -6,10 +6,7 @@ import com.mongodb.client.MongoCollection;
 import org.bson.Document;
 import org.springframework.stereotype.Service;
 import practice.configuration.GameAppplicationConfig;
-import practice.model.GameCriteria;
-import practice.model.GameMongoDocument;
-import practice.repository.GameModel;
-import practice.repository.MongoDBJpaRepository;
+import practice.repository.SQLServerGameRepository;
 import practice.transformer.MyGameTransformerImpl;
 
 
@@ -23,13 +20,13 @@ public class MongoDBDriverServiceImpl implements MongoDBDriverService {
     private MongoClient mongoClient;
     private List<GameMongoDocument> mongoDocuments;
     private MyGameTransformerImpl myGameTransformer;
-    private final MongoDBJpaRepository mongoDBJpaRepository;
+    private final SQLServerGameRepository SQLServerGameRepository;
     private final GameAppplicationConfig gameAppplicationConfig;
 
     public MongoDBDriverServiceImpl(GameAppplicationConfig gameAppplicationConfig,
-                                    MongoDBJpaRepository mongoDBJpaRepository){
+                                    SQLServerGameRepository SQLServerGameRepository){
         this.gameAppplicationConfig = gameAppplicationConfig;
-        this.mongoDBJpaRepository = mongoDBJpaRepository;
+        this.SQLServerGameRepository = SQLServerGameRepository;
     }
 
     @PostConstruct
@@ -53,7 +50,7 @@ public class MongoDBDriverServiceImpl implements MongoDBDriverService {
 
         List<GameMongoDocument> gameMongoDocuments = new ArrayList<>();
 
-        for (GameModel gameModel : mongoDBJpaRepository.findAll()) {
+        for (GameModel gameModel : SQLServerGameRepository.findAll()) {
             gameMongoDocuments.add(myGameTransformer.getGameMongo(gameModel));
 
         }
@@ -89,7 +86,7 @@ public class MongoDBDriverServiceImpl implements MongoDBDriverService {
         GameModel model = myGameTransformer.getMongoDocument(gameMongoDocument);
         model.id = generateIdForDocument();
 
-        mongoDBJpaRepository.save(model);
+        SQLServerGameRepository.save(model);
 
 
     }
@@ -99,7 +96,7 @@ public class MongoDBDriverServiceImpl implements MongoDBDriverService {
 
         mongoDocuments.clear();
 
-        List<GameModel> gameModelList = mongoDBJpaRepository.findByDevAndGenre(criteria.getDev(),
+        List<GameModel> gameModelList = SQLServerGameRepository.findByDevAndGenre(criteria.getDev(),
                 criteria.getGenre(),
                 criteria.getPublisher());
 
@@ -110,7 +107,7 @@ public class MongoDBDriverServiceImpl implements MongoDBDriverService {
 
     @Override
     public GameMongoDocument getGameById(String id){
-        GameModel gameModel = mongoDBJpaRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+        GameModel gameModel = SQLServerGameRepository.findById(id).orElseThrow(IllegalArgumentException::new);
 
         return myGameTransformer.getGameMongo(gameModel);
     }
@@ -120,7 +117,7 @@ public class MongoDBDriverServiceImpl implements MongoDBDriverService {
     }
 
     private String generateIdForDocument() {
-        return String.valueOf(mongoDBJpaRepository.count() + 1);
+        return String.valueOf(SQLServerGameRepository.count() + 1);
     }
 
 }

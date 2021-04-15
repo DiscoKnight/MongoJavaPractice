@@ -1,8 +1,5 @@
 package practice.service;
 
-import practice.model.GameCriteria;
-import practice.model.GameMongoDocument;
-
 import java.util.List;
 
 public interface MongoDBDriverService {

@@ -10,10 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
 import practice.configuration.GameAppplicationConfig;
-import practice.model.GameMongoDocument;
-import practice.model.PublisherModel;
-import practice.repository.GameModel;
-import practice.repository.MongoDBJpaRepository;
+import practice.repository.SQLServerGameRepository;
 import practice.transformer.MyGameTransformerImpl;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,10 +25,10 @@ class MongoDBDriverServiceImplTest {
     private GameAppplicationConfig gameAppplicationConfig;
 
     @Mock
-    private MongoDBJpaRepository mongoDBJpaRepository;
+    private SQLServerGameRepository SQLServerGameRepository;
 
     @InjectMocks
-    private MongoDBDriverService underTest = new MongoDBDriverServiceImpl(gameAppplicationConfig, mongoDBJpaRepository);
+    private MongoDBDriverService underTest = new MongoDBDriverServiceImpl(gameAppplicationConfig, SQLServerGameRepository);
 
     @Mock
     private MyGameTransformerImpl gameTransformer;
@@ -43,11 +40,11 @@ class MongoDBDriverServiceImplTest {
     void test_ArgumentCaptor() {
 
         when(gameTransformer.getMongoDocument(create())).thenReturn(GameModel.builder().build());
-        when(mongoDBJpaRepository.count()).thenReturn(1l);
+        when(SQLServerGameRepository.count()).thenReturn(1l);
 
         underTest.addGameToMongoDB(create());
 
-        verify(mongoDBJpaRepository).save(captor.capture());
+        verify(SQLServerGameRepository).save(captor.capture());
         GameModel captorValue = captor.getValue();
 
         assertThat(captorValue.getId()).isEqualTo("2");
