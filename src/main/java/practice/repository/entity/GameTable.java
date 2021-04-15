@@ -13,5 +13,28 @@ public class GameTable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    public Integer id;
+
+    @Column(name = "game_name")
+    public String gameName;
+
+    @Column
+    public String genre;
+
+    @Column
+    public String releasedate;
+
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(referencedColumnName = "id")
+    public DeveloperTable developerTable;
+
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(referencedColumnName = "id")
+    private UserTable userTable;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(referencedColumnName = "id")
+    private PublisherTable publisherTable;
 }

@@ -15,4 +15,7 @@ public class DeveloperTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name = "developername")
+    private String developerName;
+
 }

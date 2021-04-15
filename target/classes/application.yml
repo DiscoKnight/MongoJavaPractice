@@ -3,14 +3,13 @@ server:
     context-path: "/api/v1.0/mongo"
 
 spring:
-  data:
-    mongodb:
-      host: "mongodb+srv://dev:Normandy19@cluster0.oykwp.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
-      port: 27017
-
-mongo:
-  url: "mongodb+srv://dev:Normandy19@cluster0.oykwp.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
-  isRemote: true
-  collection:
-    databaseName: "GameDB"
-    collectionName: "GamesCollection"
+  datasource:
+    url: &dbURL jdbc:sqlserver://gamelibraryapp.database.windows.net:1433;database=test_db;user=lionheart@gamelibraryapp;password=Normandy19;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;
+    username: &dbUser lionheart
+    password: &dbPassword Normandy19
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.SQLServerDialect
+    hibernate:
+      ddl-auto: update

@@ -1,49 +1,55 @@
 package practice.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import practice.service.MongoDBDriverService;
+import practice.model.response.Game;
+import practice.repository.entity.GameTable;
+import practice.service.MsServerDBDriverService;
+import practice.transformer.MyGameTransformer;
+import practice.transformer.MyGameTransformerImpl;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
 public class GameController {
 
-    @Autowired
-    private MongoDBDriverService mongoDBDriverService;
+    private final List<Game> myList = new ArrayList<>();
+    private final MsServerDBDriverService msServerDBDriverService;
+
+    public GameController(MsServerDBDriverService msServerDBDriverService) {
+        this.msServerDBDriverService = msServerDBDriverService;
+    }
 
     @GetMapping(value = "/game/getAllGames")
     @ResponseStatus(HttpStatus.OK)
-    List<GameMongoDocument> getGames() {
-        return mongoDBDriverService.getGameFromMongoJPA();
+    @ResponseBody
+    public List<Game> viewGames() {
+       return msServerDBDriverService.getAllGames().get();
+
     }
 
     @PostMapping(value = "/game/addGame")
     @ResponseStatus(HttpStatus.CREATED)
-    void addGame(@RequestBody(required = false) GameMongoDocument gameMongoDocument) {
-
-        mongoDBDriverService.addGameToMongoDB(gameMongoDocument);
+    void addGame() {
 
     }
 
     @GetMapping(value = "/game/getById/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    GameMongoDocument findByGameById(@PathVariable String id){
-
-        return mongoDBDriverService.getGameById(id);
+    void findByGameById(@PathVariable String id) {
 
     }
 
     @GetMapping(value = "/game/findGameWithParams")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    List<GameMongoDocument> findGameByFilters(@RequestParam(required = false) String dev,
-                                              @RequestParam(required = false) String publisher,
-                                              @RequestParam(required = false) String genre){
-
-        return mongoDBDriverService.getGamesByFilter(GameCriteria.builder().dev(dev).publisher(publisher).genre(genre).build());
+    void findGameByFilters(@RequestParam(required = false) String dev,
+                           @RequestParam(required = false) String publisher,
+                           @RequestParam(required = false) String genre) {
 
     }
 
