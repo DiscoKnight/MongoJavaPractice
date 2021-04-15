@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
+import practice.configuration.GameAppplicationConfig;
 import practice.model.GameMongoDocument;
 import practice.model.PublisherModel;
 import practice.repository.GameModel;
@@ -23,14 +24,17 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 class MongoDBDriverServiceImplTest {
 
-    @InjectMocks
-    private MongoDBDriverService underTest = new MongoDBDriverServiceImpl();
-
     @Mock
-    private MyGameTransformerImpl gameTransformer;
+    private GameAppplicationConfig gameAppplicationConfig;
 
     @Mock
     private MongoDBJpaRepository mongoDBJpaRepository;
+
+    @InjectMocks
+    private MongoDBDriverService underTest = new MongoDBDriverServiceImpl(gameAppplicationConfig, mongoDBJpaRepository);
+
+    @Mock
+    private MyGameTransformerImpl gameTransformer;
 
     @Captor
     private ArgumentCaptor<GameModel> captor;

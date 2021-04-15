@@ -4,7 +4,6 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import practice.configuration.GameAppplicationConfig;
 import practice.model.GameCriteria;
@@ -12,6 +11,7 @@ import practice.model.GameMongoDocument;
 import practice.repository.GameModel;
 import practice.repository.MongoDBJpaRepository;
 import practice.transformer.MyGameTransformerImpl;
+
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -23,12 +23,14 @@ public class MongoDBDriverServiceImpl implements MongoDBDriverService {
     private MongoClient mongoClient;
     private List<GameMongoDocument> mongoDocuments;
     private MyGameTransformerImpl myGameTransformer;
+    private final MongoDBJpaRepository mongoDBJpaRepository;
+    private final GameAppplicationConfig gameAppplicationConfig;
 
-    @Autowired
-    private MongoDBJpaRepository mongoDBJpaRepository;
-
-    @Autowired
-    private GameAppplicationConfig gameAppplicationConfig;
+    public MongoDBDriverServiceImpl(GameAppplicationConfig gameAppplicationConfig,
+                                    MongoDBJpaRepository mongoDBJpaRepository){
+        this.gameAppplicationConfig = gameAppplicationConfig;
+        this.mongoDBJpaRepository = mongoDBJpaRepository;
+    }
 
     @PostConstruct
     void init() {
